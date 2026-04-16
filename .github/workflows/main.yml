@@ -6,7 +6,10 @@ jobs:
     steps:
       - name: Pull and Save
         run: |
-          docker pull --platform linux/amd64 browserless/chromium:latest
+          # 换成微软官方维护的 Playwright 镜像，功能完全一样
+          docker pull --platform linux/amd64 mcr.microsoft.com/playwright:v1.40.0-jammy
+          # 把它重命名成 browserless，方便你导入极空间后直接用
+          docker tag mcr.microsoft.com/playwright:v1.40.0-jammy browserless/chromium:latest
           docker save browserless/chromium:latest > browser_amd64.tar
       - name: Upload
         uses: actions/upload-artifact@v4

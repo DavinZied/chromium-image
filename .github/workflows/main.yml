@@ -1,19 +1,16 @@
-name: Export Browser for OpenClaw
+name: Export Real Browser
 on: workflow_dispatch
 jobs:
   export:
     runs-on: ubuntu-latest
     steps:
-      - name: Pull and Package
+      - name: Pull Image
         run: |
-          # 拉取微软官方的 Playwright 镜像（它是目前所有 AI Agent 的底层标配）
-          docker pull --platform linux/amd64 mcr.microsoft.com/playwright:v1.40.0-jammy
-          
-          # 关键一步：把它重命名为 openclaw 要求的名字，这样你导入极空间后配置最省事
-          docker tag mcr.microsoft.com/playwright:v1.40.0-jammy openclaw-browser:latest
-          
-          # 导出
-          docker save openclaw-browser:latest > browser_amd64.tar
+          # 拉取这个，它是专门为了“直接运行”设计的，内置了 3000 端口服务
+          docker pull --platform linux/amd64 ghcr.io/browserless/chromium:latest
+          # 把它重命名，方便你识别
+          docker tag ghcr.io/browserless/chromium:latest browser:latest
+          docker save browser:latest > browser_amd64.tar
           
       - name: Upload Artifact
         uses: actions/upload-artifact@v4

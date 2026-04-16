@@ -1,18 +1,22 @@
-name: Docker Save
+name: Export OpenClaw Browser
 on: workflow_dispatch
 jobs:
-  build:
+  export:
     runs-on: ubuntu-latest
     steps:
-      - name: Pull and Save
+      - name: Pull and Package
         run: |
-          # 换成微软官方维护的 Playwright 镜像，功能完全一样
-          docker pull --platform linux/amd64 mcr.microsoft.com/playwright:v1.40.0-jammy
-          # 把它重命名成 browserless，方便你导入极空间后直接用
-          docker tag mcr.microsoft.com/playwright:v1.40.0-jammy browserless/chromium:latest
-          docker save browserless/chromium:latest > browser_amd64.tar
-      - name: Upload
+          # 1. 强制拉取 amd64 平台的官方浏览器镜像
+          docker pull --platform linux/amd64 ghcr.io/openclaw/browser:latest
+          
+          # 2. 将其重命名，方便你在极空间识别
+          docker tag ghcr.io/openclaw/browser:latest openclaw-browser:latest
+          
+          # 3. 导出为 tar 文件
+          docker save openclaw-browser:latest > browser_amd64.tar
+          
+      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: browser-tar
+          name: openclaw-browser-package
           path: browser_amd64.tar
